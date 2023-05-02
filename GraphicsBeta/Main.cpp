@@ -86,7 +86,11 @@ int main(void) {
     };
 
     Renderer::Mesh cubeMesh = Renderer::Mesh(verts, colors, indices);
-    Renderer::RenderObject cube = Renderer::RenderObject(cubeMesh);
+    Renderer::RenderObject cubeA = Renderer::RenderObject(cubeMesh);
+    cubeA.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+
+    Renderer::RenderObject cubeB = Renderer::RenderObject(cubeMesh);
+    cubeB.setPosition(glm::vec3(2.0f, 0.0f, 3.0f));
 
     // Load the shader program
 
@@ -101,11 +105,8 @@ int main(void) {
 
     glm::mat4 projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.1f, 100.0f);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
-
     glm::mat4 view;
-    glm::mat4 mvp;
+    glm::mat4 finalTransform;
 
     float camera_rx = 0;
     float camera_ry = 0;
@@ -172,17 +173,25 @@ int main(void) {
         
         glm::vec3 result = view * glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-        mvp = projection * view * model;
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(programID);
-        glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
+        /* Draw cube A. */
+        finalTransform = projection * view * cubeA.getTransform();
+        glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeA.getVAO());
+        glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
+
+        /* Draw cube B. */
+        finalTransform = projection * view * cubeB.getTransform();
+        glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
+        glBindBuffer(GL_ARRAY_BUFFER, cubeB.getVAO());
         glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
 
         glDisableVertexAttribArray(0);

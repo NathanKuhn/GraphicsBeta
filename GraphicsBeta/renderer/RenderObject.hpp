@@ -28,17 +28,17 @@ namespace Renderer {
 	public:
 		RenderObject(Mesh mesh);
 
-		glm::vec3 GetPosition();
-		glm::quat GetRotation();
-		glm::vec3 GetEulerRotation();
-		glm::vec3 GetScale();
-		glm::mat4 GetTransform();
-		GLuint GetVAO();
+		glm::vec3 getPosition();
+		glm::quat getRotation();
+		glm::vec3 getEulerRotation();
+		glm::vec3 getScale();
+		glm::mat4 getTransform();
+		GLuint getVAO();
 
-		void SetPosition(glm::vec3 newPosition);
-		void SetRotation(glm::quat newRotation);
-		void SetRotation(glm::vec3 eulerAngles);
-		void SetScale(glm::vec3 newScale);
+		void setPosition(glm::vec3 newPosition);
+		void setRotation(glm::quat newRotation);
+		void setRotation(glm::vec3 eulerAngles);
+		void setScale(glm::vec3 newScale);
 
 
 	};

@@ -77,45 +77,45 @@ namespace Renderer {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, indData, GL_STATIC_DRAW);
 	}
 
-	glm::vec3 RenderObject::GetPosition() {
+	glm::vec3 RenderObject::getPosition() {
 		return position;
 	}
 
-	glm::quat RenderObject::GetRotation() {
+	glm::quat RenderObject::getRotation() {
 		return rotation;
 	}
 
-	glm::vec3 RenderObject::GetEulerRotation() {
+	glm::vec3 RenderObject::getEulerRotation() {
 		return glm::eulerAngles(rotation);
 	}
 
-	glm::vec3 RenderObject::GetScale() {
+	glm::vec3 RenderObject::getScale() {
 		return scale;
 	}
 
-	glm::mat4 RenderObject::GetTransform() {
+	glm::mat4 RenderObject::getTransform() {
 		return transform;
 	}
 
-	GLuint RenderObject::GetVAO() {
+	GLuint RenderObject::getVAO() {
 		return vao;
 	}
 
-	void RenderObject::SetPosition(glm::vec3 newPosition) {
+	void RenderObject::setPosition(glm::vec3 newPosition) {
 		position = newPosition;
 		_calcTransform();
 	}
 
-	void RenderObject::SetRotation(glm::quat newRotation) {
+	void RenderObject::setRotation(glm::quat newRotation) {
 		rotation = newRotation;
 		_calcTransform();
 	}
 
-	void RenderObject::SetRotation(glm::vec3 eulerAngles) {
+	void RenderObject::setRotation(glm::vec3 eulerAngles) {
 		rotation = glm::quat(eulerAngles);
 	}
 
-	void RenderObject::SetScale(glm::vec3 newScale) {
+	void RenderObject::setScale(glm::vec3 newScale) {
 		scale = newScale;
 		_calcTransform();
 	}
