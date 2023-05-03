@@ -87,10 +87,10 @@ int main(void) {
 
     Renderer::Mesh cubeMesh = Renderer::Mesh(verts, colors, indices);
     Renderer::RenderObject cubeA = Renderer::RenderObject(cubeMesh);
-    cubeA.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+    cubeA.setPosition(glm::vec3(1.0f, 0.0f, -3.0f));
 
     Renderer::RenderObject cubeB = Renderer::RenderObject(cubeMesh);
-    cubeB.setPosition(glm::vec3(2.0f, 0.0f, 3.0f));
+    cubeB.setPosition(glm::vec3(-1.0f, 0.0f, -3.0f));
 
     // Load the shader program
 
@@ -111,7 +111,9 @@ int main(void) {
     float camera_rx = 0;
     float camera_ry = 0;
     float lastTime = glfwGetTime();
+    float startTime = glfwGetTime();
     float deltaTime = 0.0f;
+    float totalTime = 0.0f;
 
     double mouse_px = 0;
     double mouse_py = 0;
@@ -136,6 +138,9 @@ int main(void) {
 
         deltaTime = glfwGetTime() - lastTime;
         lastTime = glfwGetTime();
+        totalTime = lastTime - startTime;
+
+        cubeA.setPosition(glm::vec3(1.0f, glm::sin(totalTime / 3.0f), -3.0f));
         
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
         
@@ -145,30 +150,30 @@ int main(void) {
         mouse_px = mouse_x;
         mouse_py = mouse_y;
 
-        camera_rx -= mouse_map(mouse_dy) * ROT_SPEED;
+        camera_rx += mouse_map(mouse_dy) * ROT_SPEED;
         camera_ry += mouse_map(mouse_dx) * ROT_SPEED;
 
         if (glfwGetKey(window, GLFW_KEY_W)) {
-            camera_pos.z += glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
+            camera_pos.z -= glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
             camera_pos.x += glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
         }
         else if (glfwGetKey(window, GLFW_KEY_S)) {
-            camera_pos.z -= glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
+            camera_pos.z += glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
             camera_pos.x -= glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
         }
 
         if (glfwGetKey(window, GLFW_KEY_D)) {
             camera_pos.x += glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
-            camera_pos.z -= glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
+            camera_pos.z += glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
         }
         else if (glfwGetKey(window, GLFW_KEY_A)) {
             camera_pos.x -= glm::cos(camera_ry) * deltaTime * MOVE_SPEED;
-            camera_pos.z += glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
+            camera_pos.z -= glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
         }
 
         view = glm::mat4(1.0f);
-        view = glm::rotate(view, 3.1415f - camera_rx, glm::vec3(1.0f, 0.0f, 0.0f));
-        view = glm::rotate(view, -camera_ry, glm::vec3(0.0f, 1.0f, 0.0f));
+        view = glm::rotate(view, camera_rx, glm::vec3(1.0f, 0.0f, 0.0f));
+        view = glm::rotate(view, camera_ry, glm::vec3(0.0f, 1.0f, 0.0f));
         view = glm::translate(view, -camera_pos);
         
         glm::vec3 result = view * glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
