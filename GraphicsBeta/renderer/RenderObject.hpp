@@ -13,7 +13,6 @@ namespace Renderer {
 	class RenderObject {
 
 	private:
-		Mesh mesh;
 		glm::vec3 position;
 		glm::quat rotation;
 		glm::vec3 scale;
@@ -26,7 +25,10 @@ namespace Renderer {
 		void _calcTransform();
 
 	public:
+		RenderObject();
 		RenderObject(Mesh mesh);
+
+		void UpdateMeshData(Mesh mesh);
 
 		glm::vec3 getPosition();
 		glm::quat getRotation();
@@ -39,6 +41,7 @@ namespace Renderer {
 		void setRotation(glm::quat newRotation);
 		void setRotation(glm::vec3 eulerAngles);
 		void setScale(glm::vec3 newScale);
+
 
 
 	};

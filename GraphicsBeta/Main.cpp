@@ -13,7 +13,7 @@
 
 #define ROT_SPEED 0.005f
 #define MOUSE_CAP 10.0f
-#define MOVE_SPEED 1.0f
+#define MOVE_SPEED 3.0f
 
 float mouse_map(float x) {
     if (x > MOUSE_CAP) {
@@ -47,6 +47,13 @@ int main(void) {
 
     if (glewInit() != GLEW_OK)
         return -2;
+
+    /* Set to 0 to turn off vsync. */
+    glfwSwapInterval(1);
+
+    int height, width;
+    glfwGetWindowSize(window, &width, &height);
+    float aspectRatio = (float)width / height;
 
     std::vector<glm::vec3> verts = {
         glm::vec3(-0.5f, 0.5f, 0.5f),
@@ -86,27 +93,22 @@ int main(void) {
     };
 
     Renderer::Mesh cubeMesh = Renderer::Mesh(verts, colors, indices);
-    Renderer::RenderObject cubeA = Renderer::RenderObject(cubeMesh);
-    cubeA.setPosition(glm::vec3(1.0f, 0.0f, -3.0f));
+    std::vector<Renderer::RenderObject> cubes;
 
-    Renderer::RenderObject cubeB = Renderer::RenderObject(cubeMesh);
-    cubeB.setPosition(glm::vec3(-1.0f, 0.0f, -3.0f));
+    for (int i = 0; i < 30; i++) {
+        cubes.push_back(Renderer::RenderObject(cubeMesh));
+    }
 
-    // Load the shader program
-
+    /* Load the shader program. */
     GLuint programID = LoadShaders("SimpleVertex.vert", "SimpleFragment.frag");
     GLuint matrixID = glGetUniformLocation(programID, "Transform");
-
-    int height, width;
-    glfwGetWindowSize(window, &width, &height);
-    float aspectRatio = (float)width / height;
 
     // Create transform matrix
 
     glm::mat4 projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.1f, 100.0f);
-
     glm::mat4 view;
     glm::mat4 finalTransform;
+    glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
 
     float camera_rx = 0;
     float camera_ry = 0;
@@ -122,14 +124,11 @@ int main(void) {
     double mouse_dx = 0;
     double mouse_dy = 0;
 
+    /* Lock the cursor. */
     glfwGetCursorPos(window, &mouse_px, &mouse_py);
-
-    glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // Set up culling and depth
-
+    /* Set up culling and depth. */
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -140,7 +139,9 @@ int main(void) {
         lastTime = glfwGetTime();
         totalTime = lastTime - startTime;
 
-        cubeA.setPosition(glm::vec3(1.0f, glm::sin(totalTime / 3.0f), -3.0f));
+        for (int i = 0; i < cubes.size(); i++) {
+            cubes[i].setPosition(glm::vec3(i * 2 - (int)cubes.size(), glm::sin(totalTime + i), -4.0f));
+        }
         
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
         
@@ -187,17 +188,13 @@ int main(void) {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
-        /* Draw cube A. */
-        finalTransform = projection * view * cubeA.getTransform();
-        glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
-        glBindBuffer(GL_ARRAY_BUFFER, cubeA.getVAO());
-        glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
-
-        /* Draw cube B. */
-        finalTransform = projection * view * cubeB.getTransform();
-        glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
-        glBindBuffer(GL_ARRAY_BUFFER, cubeB.getVAO());
-        glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
+        /* Draw cubes. */
+        for (int i = 0; i < cubes.size(); i++) {
+            finalTransform = projection * view * cubes[i].getTransform();
+            glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
+            glBindBuffer(GL_ARRAY_BUFFER, cubes[i].getVAO());
+            glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
+        }
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);

@@ -4,14 +4,22 @@
 
 namespace Renderer {
 
-	RenderObject::RenderObject(Mesh mesh) : 
-		mesh{ mesh } {
+	RenderObject::RenderObject() :
+		vao{ 0 },
+		vboPosition{ 0 },
+		vboNormal{ 0 },
+		ibo{ 0 },
+		position{ glm::vec3(0.0f, 0.0f, 0.0f) },
+		rotation{ glm::quat() },
+		scale{ glm::vec3(1.0f, 1.0f, 1.0f) },
+		transform{ glm::mat4(1.0f) } {
+	}
 
-		position = glm::vec3(0.0f, 0.0f, 0.0f);
-		rotation = glm::quat();
-		scale = glm::vec3(1.0f, 1.0f, 1.0f);
-		transform = glm::mat4(1.0f);
+	RenderObject::RenderObject(Mesh mesh) : RenderObject() {
+		UpdateMeshData(mesh);
+	}
 
+	void RenderObject::UpdateMeshData(Mesh mesh) {
 		/* Likely a better way to put the data into the buffers. */
 		size_t vertDataSize = mesh.vertices.size() * 3 * sizeof(GLfloat);
 		size_t indDataSize = mesh.triangles.size() * 3 * sizeof(GLuint);
