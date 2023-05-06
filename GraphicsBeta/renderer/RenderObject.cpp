@@ -20,7 +20,6 @@ namespace Renderer {
 	}
 
 	void RenderObject::UpdateMeshData(Mesh mesh) {
-		/* Likely a better way to put the data into the buffers. */
 		size_t vertDataSize = mesh.vertices.size() * 3 * sizeof(GLfloat);
 		size_t indDataSize = mesh.triangles.size() * 3 * sizeof(GLuint);
 
@@ -29,37 +28,9 @@ namespace Renderer {
 			return;
 		}
 
-		GLfloat* posData = (GLfloat*)malloc(vertDataSize);
-		GLfloat* normData = (GLfloat*)malloc(vertDataSize);
-		GLuint* indData = (GLuint*)malloc(indDataSize);
-
-		if (posData == NULL || normData == NULL || indData == NULL) {
-			std::cerr << "Could not allocate memory for mesh data on heap.\n";
-			exit(EXIT_FAILURE);
-		}
-
-		glm::vec3 pos;
-		glm::vec3 norm;
-		for (int vert = 0; vert < mesh.vertices.size(); vert++) {
-			pos = mesh.vertices.at(vert);
-			norm = mesh.normals.at(vert);
-
-			posData[vert * 3] = pos.x;
-			posData[vert * 3 + 1] = pos.y;
-			posData[vert * 3 + 2] = pos.z;
-
-			normData[vert * 3] = norm.x;
-			normData[vert * 3 + 1] = norm.y;
-			normData[vert * 3 + 2] = norm.z;
-		}
-
-		glm::ivec3 triangle;
-		for (int triNum = 0; triNum < mesh.triangles.size(); triNum++) {
-			triangle = mesh.triangles.at(triNum);
-
-			indData[triNum * 3] = triangle.x;
-			indData[triNum * 3 + 1] = triangle.y;
-			indData[triNum * 3 + 2] = triangle.z;
+		if (mesh.vertices.size() != mesh.normals.size()) {
+			std::cout << "ERROR: Invalid mesh data.\n";
+			return;
 		}
 
 		glGenVertexArrays(1, &vao);
@@ -68,21 +39,21 @@ namespace Renderer {
 		/* Create position buffer and populate with data. */
 		glGenBuffers(1, &vboPosition);
 		glBindBuffer(GL_ARRAY_BUFFER, vboPosition);
-		glBufferData(GL_ARRAY_BUFFER, vertDataSize, posData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertDataSize, &mesh.vertices[0], GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		/* Create normal buffer and populate with data. */
 		glGenBuffers(1, &vboNormal);
 		glBindBuffer(GL_ARRAY_BUFFER, vboNormal);
-		glBufferData(GL_ARRAY_BUFFER, vertDataSize, normData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertDataSize, &mesh.normals[0], GL_STATIC_DRAW);
 
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		/* Create index buffer and populate with data. */
 		glGenBuffers(1, &ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, indData, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, &mesh.triangles[0], GL_STATIC_DRAW);
 	}
 
 	void RenderObject::cleanUp() {

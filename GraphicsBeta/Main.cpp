@@ -15,6 +15,8 @@
 #define MOUSE_CAP 100.0f
 #define MOVE_SPEED 3.0f
 
+#define CUBES 30
+
 float mouse_map(float x) {
     if (x > MOUSE_CAP) {
         return MOUSE_CAP;
@@ -95,7 +97,7 @@ int main(void) {
     Renderer::Mesh cubeMesh = Renderer::Mesh(verts, colors, indices);
     std::vector<Renderer::RenderObject> cubes;
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < CUBES * CUBES; i++) {
         cubes.push_back(Renderer::RenderObject(cubeMesh));
     }
 
@@ -140,7 +142,7 @@ int main(void) {
         totalTime = lastTime - startTime;
 
         for (int i = 0; i < cubes.size(); i++) {
-            cubes[i].setPosition(glm::vec3(i * 2 - (int)cubes.size(), glm::sin(totalTime + i), -4.0f));
+            cubes[i].setPosition(glm::vec3(i / CUBES * 2, glm::sin(totalTime + i) * 2, i % CUBES * -2 - 4.0f));
         }
         
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
@@ -172,13 +174,18 @@ int main(void) {
             camera_pos.z -= glm::sin(camera_ry) * deltaTime * MOVE_SPEED;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+            camera_pos.y += deltaTime * MOVE_SPEED;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_Z)) {
+            camera_pos.y -= deltaTime * MOVE_SPEED;
+        }
+
         view = glm::mat4(1.0f);
         view = glm::rotate(view, camera_rx, glm::vec3(1.0f, 0.0f, 0.0f));
         view = glm::rotate(view, camera_ry, glm::vec3(0.0f, 1.0f, 0.0f));
         view = glm::translate(view, -camera_pos);
-        
-        glm::vec3 result = view * glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
