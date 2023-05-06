@@ -85,6 +85,13 @@ namespace Renderer {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, indData, GL_STATIC_DRAW);
 	}
 
+	void RenderObject::cleanUp() {
+		glDeleteBuffers(1, &vboPosition);
+		glDeleteBuffers(1, &vboNormal);
+		glDeleteBuffers(1, &ibo);
+		glDeleteVertexArrays(1, &vao);
+	}
+
 	glm::vec3 RenderObject::getPosition() {
 		return position;
 	}

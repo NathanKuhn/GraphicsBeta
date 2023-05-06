@@ -32,6 +32,7 @@ namespace Renderer {
 		/// Updates the graphics buffers with the mesh data.
 		/// </summary>
 		void UpdateMeshData(Mesh mesh);
+		void cleanUp();
 
 		glm::vec3 getPosition();
 		glm::quat getRotation();

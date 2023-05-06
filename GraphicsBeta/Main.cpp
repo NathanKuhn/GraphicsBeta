@@ -212,8 +212,9 @@ int main(void) {
 
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //glDeleteBuffers(1, &vbo);
-    //glDeleteBuffers(1, &color_vbo);
+    for (int i = 0; i < cubes.size(); i++) {
+        cubes.at(i).cleanUp();
+    }
 
     glfwTerminate();
     return 0;
