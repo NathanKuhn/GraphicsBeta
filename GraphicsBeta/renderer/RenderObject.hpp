@@ -28,6 +28,9 @@ namespace Renderer {
 		RenderObject();
 		RenderObject(Mesh mesh);
 
+		/// <summary>
+		/// Updates the graphics buffers with the mesh data.
+		/// </summary>
 		void UpdateMeshData(Mesh mesh);
 
 		glm::vec3 getPosition();

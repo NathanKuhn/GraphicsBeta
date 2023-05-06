@@ -7,12 +7,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/ext.hpp"
 
-#include "ShaderLoading.h"
 #include "renderer/Mesh.hpp"
 #include "renderer/RenderObject.hpp"
+#include "renderer/ShaderProgram.hpp"
 
 #define ROT_SPEED 0.005f
-#define MOUSE_CAP 10.0f
+#define MOUSE_CAP 100.0f
 #define MOVE_SPEED 3.0f
 
 float mouse_map(float x) {
@@ -100,8 +100,8 @@ int main(void) {
     }
 
     /* Load the shader program. */
-    GLuint programID = LoadShaders("SimpleVertex.vert", "SimpleFragment.frag");
-    GLuint matrixID = glGetUniformLocation(programID, "Transform");
+    Renderer::ShaderProgram shader = Renderer::ShaderProgram("SimpleVertex.vert", "SimpleFragment.frag");
+    shader.AddUniform("Transform");
 
     // Create transform matrix
 
@@ -183,7 +183,7 @@ int main(void) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(programID);
+        shader.Enable();
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -191,7 +191,7 @@ int main(void) {
         /* Draw cubes. */
         for (int i = 0; i < cubes.size(); i++) {
             finalTransform = projection * view * cubes[i].getTransform();
-            glUniformMatrix4fv(matrixID, 1, GL_FALSE, &finalTransform[0][0]);
+            shader.SetUniform("Transform", finalTransform);
             glBindBuffer(GL_ARRAY_BUFFER, cubes[i].getVAO());
             glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
         }
