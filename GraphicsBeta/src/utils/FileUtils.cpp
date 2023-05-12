@@ -13,6 +13,8 @@ std::string readFile(const char* filePath) {
 			output.append(line);
 			output.append("\n");
 		}
+	} else {
+		std::cout << "Failed to open file " << filePath << "\n";
 	}
 
 	return output;

@@ -102,7 +102,7 @@ int main(void) {
     }
 
     /* Load the shader program. */
-    Renderer::ShaderProgram shader = Renderer::ShaderProgram("SimpleVertex.vert", "SimpleFragment.frag");
+    Renderer::ShaderProgram shader = Renderer::ShaderProgram("resources/shaders/SimpleVertex.vert", "resources/shaders/SimpleFragment.frag");
     shader.AddUniform("Transform");
 
     // Create transform matrix
