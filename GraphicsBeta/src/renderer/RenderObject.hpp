@@ -20,6 +20,7 @@ namespace Renderer {
 		GLuint vao;
 		GLuint vboPosition;
 		GLuint vboNormal;
+		GLuint vboUv;
 		GLuint ibo;
 
 		void _calcTransform();

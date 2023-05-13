@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -6,6 +7,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/ext.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 #include "renderer/Mesh.hpp"
 #include "renderer/RenderObject.hpp"
@@ -15,7 +19,7 @@
 #define MOUSE_CAP 100.0f
 #define MOVE_SPEED 3.0f
 
-#define CUBES 30
+#define WORLD_SIZE 4
 
 float mouse_map(float x) {
     if (x > MOUSE_CAP) {
@@ -58,52 +62,153 @@ int main(void) {
     float aspectRatio = (float)width / height;
 
     std::vector<glm::vec3> verts = {
-        glm::vec3(-0.5f, 0.5f, 0.5f),
-        glm::vec3(-0.5f,-0.5f, 0.5f),
-        glm::vec3( 0.5f, 0.5f, 0.5f),
-        glm::vec3( 0.5f,-0.5f, 0.5f),
-        glm::vec3(-0.5f, 0.5f,-0.5f),
-        glm::vec3(-0.5f,-0.5f,-0.5f),
-        glm::vec3( 0.5f, 0.5f,-0.5f),
-        glm::vec3( 0.5f,-0.5f,-0.5f)
+        glm::vec3(-0.5f, 0.5f, 0.5f), // 0
+        glm::vec3(-0.5f,-0.5f, 0.5f), // 1
+        glm::vec3( 0.5f, 0.5f, 0.5f), // 2
+        glm::vec3( 0.5f,-0.5f, 0.5f), // 3
+
+        glm::vec3(-0.5f, 0.5f,-0.5f), // 4
+        glm::vec3(-0.5f,-0.5f,-0.5f), // 5
+        glm::vec3( 0.5f, 0.5f,-0.5f), // 6
+        glm::vec3( 0.5f,-0.5f,-0.5f), // 7
+
+        glm::vec3( 0.5f,-0.5f, 0.5f), // 8
+        glm::vec3( 0.5f,-0.5f,-0.5f), // 9
+        glm::vec3( 0.5f, 0.5f, 0.5f), // 10
+        glm::vec3( 0.5f, 0.5f,-0.5f), // 11
+
+        glm::vec3(-0.5f,-0.5f, 0.5f), // 12
+        glm::vec3(-0.5f,-0.5f,-0.5f), // 13
+        glm::vec3(-0.5f, 0.5f, 0.5f), // 14
+        glm::vec3(-0.5f, 0.5f,-0.5f), // 15
+
+        glm::vec3(-0.5f, 0.5f, 0.5f), // 16
+        glm::vec3(-0.5f, 0.5f,-0.5f), // 17
+        glm::vec3( 0.5f, 0.5f, 0.5f), // 18
+        glm::vec3( 0.5f, 0.5f,-0.5f), // 19
+
+        glm::vec3(-0.5f,-0.5f, 0.5f), // 20
+        glm::vec3(-0.5f,-0.5f,-0.5f), // 21
+        glm::vec3( 0.5f,-0.5f, 0.5f), // 22
+        glm::vec3( 0.5f,-0.5f,-0.5f), // 23
     };
 
-    std::vector<glm::vec3> colors = {
-        glm::vec3(0.0f, 1.0f, 1.0f),
+    std::vector<glm::vec3> normals = {
         glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(1.0f, 0.0f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f),
+
+        glm::vec3(0.0f, 0.0f, -1.0f),
+        glm::vec3(0.0f, 0.0f, -1.0f),
+        glm::vec3(0.0f, 0.0f, -1.0f),
+        glm::vec3(0.0f, 0.0f, -1.0f),
+
+        glm::vec3(1.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 0.0f, 0.0f),
+
+        glm::vec3(-1.0f, 0.0f, 0.0f),
+        glm::vec3(-1.0f, 0.0f, 0.0f),
+        glm::vec3(-1.0f, 0.0f, 0.0f),
+        glm::vec3(-1.0f, 0.0f, 0.0f),
+
         glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f, 1.0f, 0.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f)
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+
+        glm::vec3(0.0f,-1.0f, 0.0f),
+        glm::vec3(0.0f,-1.0f, 0.0f),
+        glm::vec3(0.0f,-1.0f, 0.0f),
+        glm::vec3(0.0f,-1.0f, 0.0f),
+    };
+
+    std::vector<glm::vec2> texCoords = {
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
+
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
+
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
+
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
+
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
+
+        glm::vec2(0, 1),
+        glm::vec2(0, 0),
+        glm::vec2(1, 1),
+        glm::vec2(1, 0),
     };
 
     std::vector<glm::ivec3> indices = {
         glm::ivec3(0, 3, 2),
         glm::ivec3(0, 1, 3),
-        glm::ivec3(2, 7, 6),
-        glm::ivec3(2, 3, 7),
-        glm::ivec3(6, 5, 4),
-        glm::ivec3(6, 7, 5),
-        glm::ivec3(4, 1, 0),
-        glm::ivec3(4, 5, 1),
-        glm::ivec3(0, 6, 4),
-        glm::ivec3(0, 2, 6),
-        glm::ivec3(1, 5, 7),
-        glm::ivec3(1, 7, 3)
+
+        glm::ivec3(4, 6, 7),
+        glm::ivec3(4, 7, 5),
+
+        glm::ivec3(8, 11, 10),
+        glm::ivec3(8, 9, 11),
+
+        glm::ivec3(12, 14, 15),
+        glm::ivec3(12, 15, 13),
+
+        glm::ivec3(16, 18, 19),
+        glm::ivec3(16, 19, 17),
+
+        glm::ivec3(20, 23, 22),
+        glm::ivec3(20, 21, 23)
     };
 
-    Renderer::Mesh cubeMesh = Renderer::Mesh(verts, colors, indices);
+    Renderer::Mesh cubeMesh = Renderer::Mesh(verts, normals, texCoords, indices);
     std::vector<Renderer::RenderObject> cubes;
 
-    for (int i = 0; i < CUBES * CUBES; i++) {
-        cubes.push_back(Renderer::RenderObject(cubeMesh));
+    for (int x = -WORLD_SIZE; x < WORLD_SIZE; x++) {
+        for (int y = -WORLD_SIZE; y < WORLD_SIZE; y++) {
+            cubes.push_back(Renderer::RenderObject(cubeMesh));
+            cubes.back().setPosition(glm::vec3(x, -2.0f, y));
+        }
     }
+
+    /* Load the texture. */
+    GLuint grassTexture;
+    glGenTextures(1, &grassTexture);
+    glBindTexture(GL_TEXTURE_2D, grassTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    int texWidth, texHeight, nrChannels;
+    unsigned char* data = stbi_load("resources/textures/grass.png", &texWidth, &texHeight, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load image.\n";
+    }
+    stbi_image_free(data);
 
     /* Load the shader program. */
     Renderer::ShaderProgram shader = Renderer::ShaderProgram("resources/shaders/SimpleVertex.vert", "resources/shaders/SimpleFragment.frag");
-    shader.AddUniform("Transform");
+    shader.AddUniform("uTransform");
 
     // Create transform matrix
 
@@ -133,6 +238,8 @@ int main(void) {
     /* Set up culling and depth. */
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    
+    glClearColor(0.70, 0.87, 0.95, 1.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
@@ -140,10 +247,6 @@ int main(void) {
         deltaTime = glfwGetTime() - lastTime;
         lastTime = glfwGetTime();
         totalTime = lastTime - startTime;
-
-        for (int i = 0; i < cubes.size(); i++) {
-            cubes[i].setPosition(glm::vec3(i / CUBES * 2, glm::sin(totalTime + i) * 2, i % CUBES * -2 - 4.0f));
-        }
         
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
         
@@ -178,7 +281,7 @@ int main(void) {
             camera_pos.y += deltaTime * MOVE_SPEED;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_Z)) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
             camera_pos.y -= deltaTime * MOVE_SPEED;
         }
 
@@ -194,17 +297,19 @@ int main(void) {
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         /* Draw cubes. */
         for (int i = 0; i < cubes.size(); i++) {
             finalTransform = projection * view * cubes[i].getTransform();
-            shader.SetUniform("Transform", finalTransform);
+            shader.SetUniform("uTransform", finalTransform);
             glBindBuffer(GL_ARRAY_BUFFER, cubes[i].getVAO());
             glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
         }
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

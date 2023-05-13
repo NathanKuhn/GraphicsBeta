@@ -8,9 +8,10 @@ namespace Renderer {
 		vao{ 0 },
 		vboPosition{ 0 },
 		vboNormal{ 0 },
+		vboUv{ 0 },
 		ibo{ 0 },
 		position{ glm::vec3(0.0f, 0.0f, 0.0f) },
-		rotation{ glm::quat() },
+		rotation{ glm::quat(0, 0, 0, 0) },
 		scale{ glm::vec3(1.0f, 1.0f, 1.0f) },
 		transform{ glm::mat4(1.0f) } {
 	}
@@ -21,6 +22,7 @@ namespace Renderer {
 
 	void RenderObject::UpdateMeshData(Mesh mesh) {
 		size_t vertDataSize = mesh.vertices.size() * 3 * sizeof(GLfloat);
+		size_t uvDataSize = mesh.vertices.size() * 2 * sizeof(GLfloat);
 		size_t indDataSize = mesh.triangles.size() * 3 * sizeof(GLuint);
 
 		if (vertDataSize == 0 || indDataSize == 0) {
@@ -49,6 +51,13 @@ namespace Renderer {
 		glBufferData(GL_ARRAY_BUFFER, vertDataSize, &mesh.normals[0], GL_STATIC_DRAW);
 
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		/* Create uv buffer and populate with data. */
+		glGenBuffers(1, &vboUv);
+		glBindBuffer(GL_ARRAY_BUFFER, vboUv);
+		glBufferData(GL_ARRAY_BUFFER, uvDataSize, &mesh.uvs[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 		/* Create index buffer and populate with data. */
 		glGenBuffers(1, &ibo);

@@ -46,4 +46,9 @@
     <None Include="resources\shaders\SimpleFragment.frag" />
     <None Include="resources\shaders\SimpleVertex.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\grass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
