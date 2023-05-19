@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <random>
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -11,15 +12,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#include "renderer/Mesh.hpp"
+#include "renderer/MeshData.hpp"
+#include "renderer/ChunkMesh.hpp"
 #include "renderer/RenderObject.hpp"
 #include "renderer/ShaderProgram.hpp"
 
 #define ROT_SPEED 0.005f
 #define MOUSE_CAP 100.0f
-#define MOVE_SPEED 3.0f
-
-#define WORLD_SIZE 4
+#define MOVE_SPEED 10.0f
 
 float mouse_map(float x) {
     if (x > MOUSE_CAP) {
@@ -61,131 +61,31 @@ int main(void) {
     glfwGetWindowSize(window, &width, &height);
     float aspectRatio = (float)width / height;
 
-    std::vector<glm::vec3> verts = {
-        glm::vec3(-0.5f, 0.5f, 0.5f), // 0
-        glm::vec3(-0.5f,-0.5f, 0.5f), // 1
-        glm::vec3( 0.5f, 0.5f, 0.5f), // 2
-        glm::vec3( 0.5f,-0.5f, 0.5f), // 3
+    /* Generate a single chunk. */
+    std::default_random_engine gen;
+    std::uniform_real_distribution<float> dist = std::uniform_real_distribution<float>(0.0f, 1.0f);
+   
+    unsigned short chunkData[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+    for (int x = 0; x < CHUNK_SIZE; x++) {
+        for (int y = 0; y < CHUNK_SIZE; y++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                unsigned short block;
+                if (y < 3) {
+                    block = 1;
+                } else if (y == 3 && dist(gen) < 0.5f) {
+                    block = 1;
+                } else {
+                    block = 0;
+                }
 
-        glm::vec3(-0.5f, 0.5f,-0.5f), // 4
-        glm::vec3(-0.5f,-0.5f,-0.5f), // 5
-        glm::vec3( 0.5f, 0.5f,-0.5f), // 6
-        glm::vec3( 0.5f,-0.5f,-0.5f), // 7
-
-        glm::vec3( 0.5f,-0.5f, 0.5f), // 8
-        glm::vec3( 0.5f,-0.5f,-0.5f), // 9
-        glm::vec3( 0.5f, 0.5f, 0.5f), // 10
-        glm::vec3( 0.5f, 0.5f,-0.5f), // 11
-
-        glm::vec3(-0.5f,-0.5f, 0.5f), // 12
-        glm::vec3(-0.5f,-0.5f,-0.5f), // 13
-        glm::vec3(-0.5f, 0.5f, 0.5f), // 14
-        glm::vec3(-0.5f, 0.5f,-0.5f), // 15
-
-        glm::vec3(-0.5f, 0.5f, 0.5f), // 16
-        glm::vec3(-0.5f, 0.5f,-0.5f), // 17
-        glm::vec3( 0.5f, 0.5f, 0.5f), // 18
-        glm::vec3( 0.5f, 0.5f,-0.5f), // 19
-
-        glm::vec3(-0.5f,-0.5f, 0.5f), // 20
-        glm::vec3(-0.5f,-0.5f,-0.5f), // 21
-        glm::vec3( 0.5f,-0.5f, 0.5f), // 22
-        glm::vec3( 0.5f,-0.5f,-0.5f), // 23
-    };
-
-    std::vector<glm::vec3> normals = {
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f),
-
-        glm::vec3(0.0f, 0.0f, -1.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f),
-
-        glm::vec3(1.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f),
-
-        glm::vec3(-1.0f, 0.0f, 0.0f),
-        glm::vec3(-1.0f, 0.0f, 0.0f),
-        glm::vec3(-1.0f, 0.0f, 0.0f),
-        glm::vec3(-1.0f, 0.0f, 0.0f),
-
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f),
-
-        glm::vec3(0.0f,-1.0f, 0.0f),
-        glm::vec3(0.0f,-1.0f, 0.0f),
-        glm::vec3(0.0f,-1.0f, 0.0f),
-        glm::vec3(0.0f,-1.0f, 0.0f),
-    };
-
-    std::vector<glm::vec2> texCoords = {
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-
-        glm::vec2(0, 1),
-        glm::vec2(0, 0),
-        glm::vec2(1, 1),
-        glm::vec2(1, 0),
-    };
-
-    std::vector<glm::ivec3> indices = {
-        glm::ivec3(0, 3, 2),
-        glm::ivec3(0, 1, 3),
-
-        glm::ivec3(4, 6, 7),
-        glm::ivec3(4, 7, 5),
-
-        glm::ivec3(8, 11, 10),
-        glm::ivec3(8, 9, 11),
-
-        glm::ivec3(12, 14, 15),
-        glm::ivec3(12, 15, 13),
-
-        glm::ivec3(16, 18, 19),
-        glm::ivec3(16, 19, 17),
-
-        glm::ivec3(20, 23, 22),
-        glm::ivec3(20, 21, 23)
-    };
-
-    Renderer::Mesh cubeMesh = Renderer::Mesh(verts, normals, texCoords, indices);
-    std::vector<Renderer::RenderObject> cubes;
-
-    for (int x = -WORLD_SIZE; x < WORLD_SIZE; x++) {
-        for (int y = -WORLD_SIZE; y < WORLD_SIZE; y++) {
-            cubes.push_back(Renderer::RenderObject(cubeMesh));
-            cubes.back().setPosition(glm::vec3(x, -2.0f, y));
+                chunkData[x * CHUNK_SIZE * CHUNK_SIZE + y * CHUNK_SIZE + z] = block;
+            }
         }
     }
+
+    Data::Chunk chunk = Data::Chunk(chunkData, glm::ivec3(0, 0, 0));
+
+    Renderer::ChunkMesh chunkMesh = Renderer::ChunkMesh(chunk);
 
     /* Load the texture. */
     GLuint grassTexture;
@@ -207,15 +107,15 @@ int main(void) {
     stbi_image_free(data);
 
     /* Load the shader program. */
-    Renderer::ShaderProgram shader = Renderer::ShaderProgram("resources/shaders/SimpleVertex.vert", "resources/shaders/SimpleFragment.frag");
-    shader.AddUniform("uTransform");
+    Renderer::ShaderProgram chunkShader = Renderer::ShaderProgram("resources/shaders/SimpleVertex.vert", "resources/shaders/SimpleFragment.frag");
+    chunkShader.AddUniform("uTransform");
 
     // Create transform matrix
 
     glm::mat4 projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.1f, 100.0f);
     glm::mat4 view;
     glm::mat4 finalTransform;
-    glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 camera_pos = glm::vec3(0.0f, 10.0f, 0.0f);
 
     float camera_rx = 0;
     float camera_ry = 0;
@@ -281,7 +181,7 @@ int main(void) {
             camera_pos.y += deltaTime * MOVE_SPEED;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
             camera_pos.y -= deltaTime * MOVE_SPEED;
         }
 
@@ -293,19 +193,21 @@ int main(void) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.Enable();
+        chunkShader.Enable();
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        /* Draw cubes. */
-        for (int i = 0; i < cubes.size(); i++) {
-            finalTransform = projection * view * cubes[i].getTransform();
-            shader.SetUniform("uTransform", finalTransform);
-            glBindBuffer(GL_ARRAY_BUFFER, cubes[i].getVAO());
-            glDrawElements(GL_TRIANGLES, cubeMesh.triangles.size() * 3, GL_UNSIGNED_INT, NULL);
-        }
+        /* Draw chunk. */
+
+        Renderer::RenderObject chunkObject = chunkMesh.getRenderObject();
+        finalTransform = projection * view * chunkObject.getTransform();
+        chunkShader.SetUniform("uTransform", finalTransform);
+        glBindBuffer(GL_ARRAY_BUFFER, chunkObject.getVAO());
+        //glBindVertexArray(chunkObject.getVAO());
+        //glDrawArrays(GL_TRIANGLES, 0, chunkObject.getNumVerts());
+        glDrawElements(GL_TRIANGLES, chunkObject.getNumTriangles() * 3, GL_UNSIGNED_INT, NULL);
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -324,9 +226,7 @@ int main(void) {
 
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    for (int i = 0; i < cubes.size(); i++) {
-        cubes.at(i).cleanUp();
-    }
+    chunkMesh.getRenderObject().cleanUp();
 
     glfwTerminate();
     return 0;

@@ -6,7 +6,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
-#include "Mesh.hpp"
+#include "MeshData.hpp"
 
 namespace Renderer {
 
@@ -22,17 +22,19 @@ namespace Renderer {
 		GLuint vboNormal;
 		GLuint vboUv;
 		GLuint ibo;
+		unsigned int numTriangles;
+		unsigned int numVerts;
 
 		void _calcTransform();
 
 	public:
 		RenderObject();
-		RenderObject(Mesh mesh);
+		RenderObject(MeshData mesh);
 
 		/// <summary>
 		/// Updates the graphics buffers with the mesh data.
 		/// </summary>
-		void UpdateMeshData(Mesh mesh);
+		void updateMeshData(MeshData mesh);
 		void cleanUp();
 
 		glm::vec3 getPosition();
@@ -41,6 +43,8 @@ namespace Renderer {
 		glm::vec3 getScale();
 		glm::mat4 getTransform();
 		GLuint getVAO();
+		unsigned int getNumTriangles();
+		unsigned int getNumVerts();
 
 		void setPosition(glm::vec3 newPosition);
 		void setRotation(glm::quat newRotation);

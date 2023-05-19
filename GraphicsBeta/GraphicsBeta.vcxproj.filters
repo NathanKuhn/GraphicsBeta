@@ -27,9 +27,15 @@
     <ClCompile Include="src\utils\FileUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\data\Chunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\ChunkMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\renderer\Mesh.hpp">
+    <ClInclude Include="src\renderer\MeshData.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer\RenderObject.hpp">
@@ -39,6 +45,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\FileUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\data\Chunk.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\ChunkMesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
