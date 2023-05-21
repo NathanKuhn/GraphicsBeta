@@ -158,10 +158,10 @@
     <ClInclude Include="src\utils\FileUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\SimpleFragment.frag">
+    <None Include="resources\shaders\ChunkFragment.frag">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="resources\shaders\SimpleVertex.vert">
+    <None Include="resources\shaders\ChunkVertex.vert">
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -169,6 +169,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </None>
+    <None Include="resources\shaders\SkyFragment.frag" />
+    <None Include="resources\shaders\SkyVertex.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\grass.png">

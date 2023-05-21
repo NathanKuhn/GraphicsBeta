@@ -34,6 +34,15 @@ namespace Renderer {
 		return true;
 	}
 
+	bool ShaderProgram::SetUniform(const std::string& uniformName, const glm::vec3& vector) {
+		if (!uniformIDsByName.count(uniformName)) {
+			return false;
+		}
+		GLuint uniformHandle = uniformIDsByName[uniformName];
+		glUniform3f(uniformHandle, vector.x, vector.y, vector.z);
+		return true;
+	}
+
 	GLuint ShaderProgram::_loadProgram(const std::string& vertexFilePath, const std::string& fragmentFilePath) {
 		GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 		GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);

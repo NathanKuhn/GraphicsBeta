@@ -106,13 +106,46 @@ int main(void) {
     }
     stbi_image_free(data);
 
-    /* Load the shader program. */
-    Renderer::ShaderProgram chunkShader = Renderer::ShaderProgram("resources/shaders/SimpleVertex.vert", "resources/shaders/SimpleFragment.frag");
+    /* Load the shader program for chunks. */
+    Renderer::ShaderProgram chunkShader = Renderer::ShaderProgram("resources/shaders/ChunkVertex.vert", "resources/shaders/ChunkFragment.frag");
     chunkShader.AddUniform("uTransform");
+
+    /* Load the shader program for the sky. */
+    Renderer::ShaderProgram skyShader = Renderer::ShaderProgram("resources/shaders/SkyVertex.vert", "resources/shaders/SkyFragment.frag");
+    skyShader.AddUniform("uTransform");
+
+    std::vector<glm::vec3> skyVerts = {
+        glm::vec3(-1, -1, 0.99999),
+        glm::vec3(1, -1, 0.99999),
+        glm::vec3(1, 1, 0.99999),
+        glm::vec3(-1, 1, 0.99999)
+    };
+
+    std::vector<glm::vec3> skyNormals = {
+        glm::vec3(0, 0, -1),
+        glm::vec3(0, 0, -1),
+        glm::vec3(0, 0, -1),
+        glm::vec3(0, 0, -1)
+    };
+
+    std::vector<glm::vec2> skyUvs = {
+        glm::vec2(0, 0),
+        glm::vec2(1, 0),
+        glm::vec2(1, 1),
+        glm::vec2(0, 1)
+    };
+
+    std::vector<glm::ivec3> skyTris = {
+        glm::ivec3(0, 1, 2),
+        glm::ivec3(0, 2, 3)
+    };
+
+    Renderer::MeshData skyMesh = Renderer::MeshData(skyVerts, skyNormals, skyUvs, skyTris);
+    Renderer::RenderObject skyQuad = Renderer::RenderObject(skyMesh);
 
     // Create transform matrix
 
-    glm::mat4 projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.1f, 90.0f);
     glm::mat4 view;
     glm::mat4 finalTransform;
     glm::vec3 camera_pos = glm::vec3(0.0f, 10.0f, 0.0f);
@@ -188,25 +221,40 @@ int main(void) {
         view = glm::mat4(1.0f);
         view = glm::rotate(view, camera_rx, glm::vec3(1.0f, 0.0f, 0.0f));
         view = glm::rotate(view, camera_ry, glm::vec3(0.0f, 1.0f, 0.0f));
-        view = glm::translate(view, -camera_pos);
+
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        /* Draw Sky. */
+        skyShader.Enable();
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
+        skyShader.SetUniform("uTransform", glm::inverse(projection * view));
+        glBindVertexArray(skyQuad.getVAO());
+        glDrawElements(GL_TRIANGLES, skyQuad.getNumTriangles() * 3, GL_UNSIGNED_INT, NULL);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+
+        // Sky shader should not have offset.
+        view = glm::translate(view, -camera_pos);
+
+        /* Draw chunk. */
         chunkShader.Enable();
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        /* Draw chunk. */
-
         Renderer::RenderObject chunkObject = chunkMesh.getRenderObject();
         finalTransform = projection * view * chunkObject.getTransform();
         chunkShader.SetUniform("uTransform", finalTransform);
-        glBindBuffer(GL_ARRAY_BUFFER, chunkObject.getVAO());
-        //glBindVertexArray(chunkObject.getVAO());
-        //glDrawArrays(GL_TRIANGLES, 0, chunkObject.getNumVerts());
+        glBindVertexArray(chunkObject.getVAO());
         glDrawElements(GL_TRIANGLES, chunkObject.getNumTriangles() * 3, GL_UNSIGNED_INT, NULL);
 
         glDisableVertexAttribArray(0);
@@ -220,6 +268,11 @@ int main(void) {
         glfwPollEvents();
 
         if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+            if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            } else {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            }
             glfwSetWindowShouldClose(window, true);
         }
     }

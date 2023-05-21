@@ -55,8 +55,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\SimpleFragment.frag" />
-    <None Include="resources\shaders\SimpleVertex.vert" />
+    <None Include="resources\shaders\ChunkFragment.frag" />
+    <None Include="resources\shaders\ChunkVertex.vert" />
+    <None Include="resources\shaders\SkyVertex.vert" />
+    <None Include="resources\shaders\SkyFragment.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\grass.png">

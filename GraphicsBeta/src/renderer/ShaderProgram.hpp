@@ -20,6 +20,7 @@ namespace Renderer {
 		void Enable();
 		bool AddUniform(const std::string& uniformName);
 		bool SetUniform(const std::string& uniformName, const glm::mat4& matrix);
+		bool SetUniform(const std::string& uniformName, const glm::vec3& vector);
 	};
 
 }
