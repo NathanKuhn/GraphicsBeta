@@ -17,10 +17,10 @@ namespace Renderer {
 
 	public:
 		ShaderProgram(const std::string& vertexShaderFileName, const std::string& fragmentShaderFileName);
-		void Enable();
-		bool AddUniform(const std::string& uniformName);
-		bool SetUniform(const std::string& uniformName, const glm::mat4& matrix);
-		bool SetUniform(const std::string& uniformName, const glm::vec3& vector);
+		void enable() const;
+		bool addUniform(const std::string& uniformName);
+		bool setUniform(const std::string& uniformName, const glm::mat4& matrix) const;
+		bool setUniform(const std::string& uniformName, const glm::vec3& vector) const;
 	};
 
 }

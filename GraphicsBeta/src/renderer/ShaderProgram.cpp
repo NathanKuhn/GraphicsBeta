@@ -11,11 +11,11 @@ namespace Renderer {
 		uniformIDsByName = std::map<std::string, GLuint>();
 	}
 
-	void ShaderProgram::Enable() {
+	void ShaderProgram::enable() const{
 		glUseProgram(programID);
 	}
 
-	bool ShaderProgram::AddUniform(const std::string& uniformName) {
+	bool ShaderProgram::addUniform(const std::string& uniformName) {
 		GLuint uniformHandle = glGetUniformLocation(programID, uniformName.c_str());
 		if (uniformHandle == -1) {
 			std::cerr << "Failed to locate uniform \'" << uniformName << "\'. Are you sure it exists?\n";
@@ -25,20 +25,20 @@ namespace Renderer {
 		return true;
 	}
 
-	bool ShaderProgram::SetUniform(const std::string& uniformName, const glm::mat4& matrix) {
+	bool ShaderProgram::setUniform(const std::string& uniformName, const glm::mat4& matrix) const{
 		if (!uniformIDsByName.count(uniformName)) {
 			return false;
 		}
-		GLuint uniformHandle = uniformIDsByName[uniformName];
+		GLuint uniformHandle = uniformIDsByName.at(uniformName);
 		glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &matrix[0][0]);
 		return true;
 	}
 
-	bool ShaderProgram::SetUniform(const std::string& uniformName, const glm::vec3& vector) {
+	bool ShaderProgram::setUniform(const std::string& uniformName, const glm::vec3& vector) const{
 		if (!uniformIDsByName.count(uniformName)) {
 			return false;
 		}
-		GLuint uniformHandle = uniformIDsByName[uniformName];
+		GLuint uniformHandle = uniformIDsByName.at(uniformName);
 		glUniform3f(uniformHandle, vector.x, vector.y, vector.z);
 		return true;
 	}

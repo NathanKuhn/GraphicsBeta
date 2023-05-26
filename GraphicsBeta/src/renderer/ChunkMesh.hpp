@@ -5,6 +5,7 @@
 #include "MeshData.hpp"
 #include "RenderObject.hpp"
 #include "../data/Chunk.hpp"
+#include "../data/World.hpp"
 
 namespace Renderer {
 	class ChunkMesh {
@@ -15,10 +16,10 @@ namespace Renderer {
 		void _addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset);
 
 	public:
-		ChunkMesh(const Data::Chunk& chunkData);
+		ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData);
 
-		void updateMesh(const Data::Chunk& chunkData);
-		RenderObject getRenderObject();
+		void updateMesh(const Data::Chunk& chunkData, const Data::World& worldData);
+		RenderObject getRenderObject() const;
 	};
 
     const MeshData _NEG_Z_FACE = MeshData(

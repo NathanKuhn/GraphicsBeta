@@ -3,27 +3,29 @@
 
 namespace Renderer {
 
-	ChunkMesh::ChunkMesh(const Data::Chunk& chunkData) {
+	ChunkMesh::ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData) {
 		renderObject = RenderObject();
 		renderObject.setPosition(chunkData.getChunkPosition() * CHUNK_SIZE);
-		updateMesh(chunkData);
+		updateMesh(chunkData, worldData);
 	}
 
-	void ChunkMesh::updateMesh(const Data::Chunk& chunkData) {
+	void ChunkMesh::updateMesh(const Data::Chunk& chunkData, const Data::World& worldData) {
 		bool px, nx, py, ny, pz, nz;
 		MeshData newMesh = MeshData();
+		glm::ivec3 worldOffset = chunkData.getChunkPosition() * CHUNK_SIZE;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
 					if (chunkData.getBlock(x, y, z)) {
-						px = x >= CHUNK_SIZE - 1 || !chunkData.getBlock(x + 1, y, z);
-						nx = x <= 0 || !chunkData.getBlock(x - 1, y, z);
 
-						py = y >= CHUNK_SIZE - 1 || !chunkData.getBlock(x, y + 1, z);
-						ny = y <= 0 || !chunkData.getBlock(x, y - 1, z);
+						px = (x + 1 < CHUNK_SIZE) ? !chunkData.getBlock(x + 1, y, z) : !worldData.getBlock(glm::ivec3(x + 1, y, z) + worldOffset);
+						nx = (x > 0) ? !chunkData.getBlock(x - 1, y, z) : !worldData.getBlock(glm::ivec3(x - 1, y, z) + worldOffset);
 
-						pz = z >= CHUNK_SIZE - 1 || !chunkData.getBlock(x, y, z + 1);
-						nz = z <= 0 || !chunkData.getBlock(x, y, z - 1);
+						py = (y + 1 < CHUNK_SIZE) ? !chunkData.getBlock(x, y + 1, z) : !worldData.getBlock(glm::ivec3(x, y + 1, z) + worldOffset);
+						ny = (y > 0) ? !chunkData.getBlock(x, y - 1, z) : !worldData.getBlock(glm::ivec3(x, y - 1, z) + worldOffset);
+
+						pz = (z + 1 < CHUNK_SIZE) ? !chunkData.getBlock(x, y, z + 1) : !worldData.getBlock(glm::ivec3(x, y, z + 1) + worldOffset);
+						nz = (z > 0) ? !chunkData.getBlock(x, y, z - 1) : !worldData.getBlock(glm::ivec3(x, y, z - 1) + worldOffset);
 
 						glm::vec3 offset(x, y, z);
 						if (px) {
@@ -52,22 +54,19 @@ namespace Renderer {
 		renderObject.updateMeshData(newMesh);
 	}
 
-	RenderObject ChunkMesh::getRenderObject() {
+	RenderObject ChunkMesh::getRenderObject() const {
 		return renderObject;
 	}
 
 	void ChunkMesh::_addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset) {
 		int indexOffset = destination.vertices.size();
 
-		destination.vertices.reserve(destination.vertices.size() + source.vertices.size());
 		for (int i = 0; i < source.vertices.size(); i++) {
 			destination.vertices.push_back(source.vertices.at(i) + offset);
 		}
 	
 		destination.normals.insert(destination.normals.end(), source.normals.begin(), source.normals.end());
 		destination.uvs.insert(destination.uvs.end(), source.uvs.begin(), source.uvs.end());
-		
-		destination.triangles.reserve(destination.triangles.size() + source.triangles.size());
 
 		for (int i = 0; i < source.triangles.size(); i++) {
 			destination.triangles.push_back(source.triangles.at(i) + indexOffset);

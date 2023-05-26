@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 #include "glm/glm.hpp"
 
 #define CHUNK_SIZE 32
@@ -9,7 +9,7 @@ namespace Data {
 	class Chunk {
 
 	private:
-		unsigned short blockValues[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+		std::vector<unsigned short> blockValues;
 		const glm::ivec3 chunkPosition;
 
 	public:

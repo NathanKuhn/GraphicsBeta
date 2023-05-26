@@ -142,20 +142,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\renderer\Camera.cpp" />
     <ClCompile Include="src\renderer\ChunkMesh.cpp" />
     <ClCompile Include="src\data\Chunk.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\renderer\RenderObject.cpp" />
     <ClCompile Include="src\renderer\ShaderProgram.cpp" />
     <ClCompile Include="src\utils\FileUtils.cpp" />
+    <ClCompile Include="src\data\World.cpp" />
+    <ClCompile Include="src\renderer\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\renderer\Camera.hpp" />
     <ClInclude Include="src\renderer\ChunkMesh.hpp" />
     <ClInclude Include="src\data\Chunk.hpp" />
     <ClInclude Include="src\renderer\MeshData.hpp" />
     <ClInclude Include="src\renderer\RenderObject.hpp" />
     <ClInclude Include="src\renderer\ShaderProgram.hpp" />
     <ClInclude Include="src\utils\FileUtils.h" />
+    <ClInclude Include="src\data\World.hpp" />
+    <ClInclude Include="src\renderer\WorldRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\ChunkFragment.frag">
