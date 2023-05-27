@@ -9,7 +9,7 @@ namespace Data {
 	class Chunk {
 
 	private:
-		std::vector<unsigned short> blockValues;
+		unsigned short *blockValues;
 		const glm::ivec3 chunkPosition;
 
 	public:
@@ -21,7 +21,6 @@ namespace Data {
 		glm::ivec3 getChunkPosition() const;
 
 		void setBlock(glm::ivec3 subchunkPosition, unsigned short blockId);
-
 	};
 
 }

@@ -17,6 +17,8 @@ namespace Data {
 				}
 			}
 		}
+
+		return;
 	}
 
 	const Chunk& World::getChunk(glm::ivec3 chunkLocation) const {

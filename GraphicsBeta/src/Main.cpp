@@ -54,7 +54,8 @@ int main(void) {
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(960, 540, "OpenGL Context", NULL, NULL);
+    //window = glfwCreateWindow(960, 540, "OpenGL Context", NULL, NULL);
+    window = glfwCreateWindow(1280, 720, "OpenGL Context", NULL, NULL);
 
     if (!window) {
         glfwTerminate();
@@ -132,11 +133,11 @@ int main(void) {
 
     // Generate the world
 
-    Data::World world = Data::World(4, 1, 4);
+    Data::World world = Data::World(8, 2, 8);
 
     // Create Camera and WorldRenderer
 
-    Renderer::Camera camera = Renderer::Camera(glm::vec3(0.0f, 30.0f, 0.0f), glm::radians(80.0f), aspectRatio);
+    Renderer::Camera camera = Renderer::Camera(glm::vec3(0.0f, 60.0f, 0.0f), glm::radians(80.0f), aspectRatio);
     Renderer::WorldRenderer renderer = Renderer::WorldRenderer(world, camera, chunkShader);
 
     camera.ry = 3.1415f;
