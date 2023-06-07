@@ -28,23 +28,25 @@ namespace Renderer {
 						nz = (z > 0) ? !chunkData.getBlock(x, y, z - 1) : !worldData.getBlock(glm::ivec3(x, y, z - 1) + worldOffset);
 
 						glm::vec3 offset(x, y, z);
+						glm::vec2 uvOffset(0.0f, 0.0f);
+						float uvScale = 1.0f;
 						if (px) {
-							_addMesh(newMesh, _POS_X_FACE, offset);
+							_addMesh(newMesh, _POS_X_FACE, offset, uvOffset, uvScale);
 						}
 						if (nx) {
-							_addMesh(newMesh, _NEG_X_FACE, offset);
+							_addMesh(newMesh, _NEG_X_FACE, offset, uvOffset, uvScale);
 						}
 						if (py) {
-							_addMesh(newMesh, _POS_Y_FACE, offset);
+							_addMesh(newMesh, _POS_Y_FACE, offset, uvOffset, uvScale);
 						}
 						if (ny) {
-							_addMesh(newMesh, _NEG_Y_FACE, offset);
+							_addMesh(newMesh, _NEG_Y_FACE, offset, uvOffset, uvScale);
 						}
 						if (pz) {
-							_addMesh(newMesh, _POS_Z_FACE, offset);
+							_addMesh(newMesh, _POS_Z_FACE, offset, uvOffset, uvScale);
 						}
 						if (nz) { 
-							_addMesh(newMesh, _NEG_Z_FACE, offset);
+							_addMesh(newMesh, _NEG_Z_FACE, offset, uvOffset, uvScale);
 						}
 					}
 				}
@@ -58,7 +60,7 @@ namespace Renderer {
 		return renderObject;
 	}
 
-	void ChunkMesh::_addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset) {
+	void ChunkMesh::_addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset, const glm::vec2 uvOffset, const float uvScale) {
 		int indexOffset = destination.vertices.size();
 
 		for (int i = 0; i < source.vertices.size(); i++) {
@@ -66,7 +68,10 @@ namespace Renderer {
 		}
 	
 		destination.normals.insert(destination.normals.end(), source.normals.begin(), source.normals.end());
-		destination.uvs.insert(destination.uvs.end(), source.uvs.begin(), source.uvs.end());
+
+		for (int i = 0; i < source.uvs.size(); i++) {
+			destination.uvs.push_back(source.uvs.at(i) * uvScale + uvOffset);
+		}
 
 		for (int i = 0; i < source.triangles.size(); i++) {
 			destination.triangles.push_back(source.triangles.at(i) + indexOffset);

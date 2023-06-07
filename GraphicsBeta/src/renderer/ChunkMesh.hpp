@@ -13,7 +13,7 @@ namespace Renderer {
 	private:
 		RenderObject renderObject;
 
-		void _addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset);
+		void _addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset, const glm::vec2 uvOffset, const float uvScale);
 
 	public:
 		ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData);

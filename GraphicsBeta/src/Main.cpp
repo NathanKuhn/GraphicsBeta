@@ -85,7 +85,8 @@ int main(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int texWidth, texHeight, nrChannels;
-    unsigned char* data = stbi_load("resources/textures/grass.png", &texWidth, &texHeight, &nrChannels, 0);
+    unsigned char* data = stbi_load("resources/textures/sand.png", &texWidth, &texHeight, &nrChannels, 0);
+
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -133,7 +134,7 @@ int main(void) {
 
     // Generate the world
 
-    Data::World world = Data::World(8, 2, 8);
+    Data::World world = Data::World(5, 3, 5);
 
     // Create Camera and WorldRenderer
 

@@ -179,9 +179,11 @@
     <None Include="resources\shaders\SkyVertex.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\textures\debug.png" />
     <Image Include="resources\textures\grass.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="resources\textures\sand.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
