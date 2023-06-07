@@ -77,35 +77,35 @@ namespace Renderer {
 		glDeleteVertexArrays(1, &vao);
 	}
 
-	glm::vec3 RenderObject::getPosition() {
+	glm::vec3 RenderObject::getPosition() const {
 		return position;
 	}
 
-	glm::quat RenderObject::getRotation() {
+	glm::quat RenderObject::getRotation() const {
 		return rotation;
 	}
 
-	glm::vec3 RenderObject::getEulerRotation() {
+	glm::vec3 RenderObject::getEulerRotation() const {
 		return glm::eulerAngles(rotation);
 	}
 
-	glm::vec3 RenderObject::getScale() {
+	glm::vec3 RenderObject::getScale() const {
 		return scale;
 	}
 
-	glm::mat4 RenderObject::getTransform() {
+	glm::mat4 RenderObject::getTransform() const {
 		return transform;
 	}
 
-	GLuint RenderObject::getVAO() {
+	GLuint RenderObject::getVAO() const {
 		return vao;
 	}
 
-	unsigned int RenderObject::getNumTriangles() {
+	unsigned int RenderObject::getNumTriangles() const {
 		return numTriangles;
 	}
 
-	unsigned int RenderObject::getNumVerts() {
+	unsigned int RenderObject::getNumVerts() const {
 		return numVerts;
 	}
 

@@ -95,43 +95,6 @@ int main(void) {
     }
     stbi_image_free(data);
 
-    /* Load the shader program for chunks. */
-    Renderer::ShaderProgram chunkShader = Renderer::ShaderProgram("resources/shaders/ChunkVertex.vert", "resources/shaders/ChunkFragment.frag");
-    chunkShader.addUniform("uTransform");
-
-    /* Load the shader program for the sky. */
-    Renderer::ShaderProgram skyShader = Renderer::ShaderProgram("resources/shaders/SkyVertex.vert", "resources/shaders/SkyFragment.frag");
-    skyShader.addUniform("uTransform");
-
-    std::vector<glm::vec3> skyVerts = {
-        glm::vec3(-1, -1, 0.99999),
-        glm::vec3(1, -1, 0.99999),
-        glm::vec3(1, 1, 0.99999),
-        glm::vec3(-1, 1, 0.99999)
-    };
-
-    std::vector<glm::vec3> skyNormals = {
-        glm::vec3(0, 0, -1),
-        glm::vec3(0, 0, -1),
-        glm::vec3(0, 0, -1),
-        glm::vec3(0, 0, -1)
-    };
-
-    std::vector<glm::vec2> skyUvs = {
-        glm::vec2(0, 0),
-        glm::vec2(1, 0),
-        glm::vec2(1, 1),
-        glm::vec2(0, 1)
-    };
-
-    std::vector<glm::ivec3> skyTris = {
-        glm::ivec3(0, 1, 2),
-        glm::ivec3(0, 2, 3)
-    };
-
-    Renderer::MeshData skyMesh = Renderer::MeshData(skyVerts, skyNormals, skyUvs, skyTris);
-    Renderer::RenderObject skyQuad = Renderer::RenderObject(skyMesh);
-
     // Generate the world
 
     Data::World world = Data::World(5, 3, 5);
@@ -139,7 +102,7 @@ int main(void) {
     // Create Camera and WorldRenderer
 
     Renderer::Camera camera = Renderer::Camera(glm::vec3(0.0f, 60.0f, 0.0f), glm::radians(80.0f), aspectRatio);
-    Renderer::WorldRenderer renderer = Renderer::WorldRenderer(world, camera, chunkShader);
+    Renderer::WorldRenderer renderer = Renderer::WorldRenderer(world, camera);
 
     camera.ry = 3.1415f;
 
@@ -216,22 +179,7 @@ int main(void) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /* Draw Sky. */
-        skyShader.enable();
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-
-        skyShader.setUniform("uTransform", glm::inverse(camera.getProjectionMatrix() * camera.getRotationMatrix()));
-        glBindVertexArray(skyQuad.getVAO());
-        glDrawElements(GL_TRIANGLES, skyQuad.getNumTriangles() * 3, GL_UNSIGNED_INT, NULL);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-
-        /* Draw chunk. */
+        /* Draw world. */
         renderer.Render();
 
         /* Swap front and back buffers */

@@ -37,14 +37,14 @@ namespace Renderer {
 		void updateMeshData(MeshData mesh);
 		void cleanUp();
 
-		glm::vec3 getPosition();
-		glm::quat getRotation();
-		glm::vec3 getEulerRotation();
-		glm::vec3 getScale();
-		glm::mat4 getTransform();
-		GLuint getVAO();
-		unsigned int getNumTriangles();
-		unsigned int getNumVerts();
+		glm::vec3 getPosition() const;
+		glm::quat getRotation() const;
+		glm::vec3 getEulerRotation() const;
+		glm::vec3 getScale() const;
+		glm::mat4 getTransform() const;
+		GLuint getVAO() const;
+		unsigned int getNumTriangles() const;
+		unsigned int getNumVerts() const;
 
 		void setPosition(glm::vec3 newPosition);
 		void setRotation(glm::quat newRotation);

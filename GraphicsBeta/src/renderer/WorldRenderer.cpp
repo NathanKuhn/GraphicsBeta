@@ -3,14 +3,19 @@
 
 namespace Renderer {
 
-	WorldRenderer::WorldRenderer(const Data::World& worldRef, const Camera& cameraRef, const ShaderProgram& shaderRef) :
+	WorldRenderer::WorldRenderer(const Data::World& worldRef, const Camera& cameraRef) :
 		world{ worldRef },
 		camera{ cameraRef },
-		shader{ shaderRef } {
+		shader{ Renderer::ShaderProgram("resources/shaders/ChunkVertex.vert", "resources/shaders/ChunkFragment.frag") },
+		skyShader{ Renderer::ShaderProgram("resources/shaders/SkyVertex.vert", "resources/shaders/SkyFragment.frag") } {
+
+		shader.addUniform("uTransform");
+		skyShader.addUniform("uTransform");
+
+		MeshData skyMesh = MeshData(skyVerts, skyNormals, skyUvs, skyTris);
+		skyObject = RenderObject(skyMesh);
 
 		glm::ivec3 worldSize = world.getWorldSize();
-
-		chunkMeshes = std::vector<ChunkMesh>();
 		chunkMeshes.reserve(worldSize.x * worldSize.y * worldSize.z);
 
 		for (int x = 0; x < worldSize.x; x++) {
@@ -30,6 +35,22 @@ namespace Renderer {
 		glm::mat4 worldToScreen = camera.getProjectionMatrix() * camera.getViewMatrix();
 		glm::mat4 transform;
 
+		/* Render the sky quad. */
+		skyShader.enable();
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+
+		skyShader.setUniform("uTransform", glm::inverse(camera.getProjectionMatrix() * camera.getRotationMatrix()));
+		glBindVertexArray(skyObject.getVAO());
+		glDrawElements(GL_TRIANGLES, skyObject.getNumTriangles() * 3, GL_UNSIGNED_INT, NULL);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+
+		/* Render the chunks of the world. */
 		shader.enable();
 
 		for (int i = 0; i < chunkMeshes.size(); i++) {
