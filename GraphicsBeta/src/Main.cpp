@@ -19,6 +19,7 @@
 #include "renderer/ShaderProgram.hpp"
 #include "renderer/Camera.hpp"
 #include "renderer/WorldRenderer.hpp"
+#include "renderer/TextureAtlas.h"
 
 #define ROT_SPEED 0.005f
 #define MOUSE_CAP 100.0f
@@ -75,8 +76,16 @@ int main(void) {
     glfwGetWindowSize(window, &width, &height);
     float aspectRatio = (float)width / height;
 
+    std::cout << "[Main]: Creating textures...\n";
+
+    Renderer::TextureAtlas atlas({
+        "resources/textures/grass.png",
+        "resources/textures/sand.png",
+        "resources/textures/gravel.png",
+        "resources/textures/unknown.png"});
+
     /* Load the texture. */
-    GLuint grassTexture;
+    /*GLuint grassTexture;
     glGenTextures(1, &grassTexture);
     glBindTexture(GL_TEXTURE_2D, grassTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -85,7 +94,7 @@ int main(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int texWidth, texHeight, nrChannels;
-    unsigned char* data = stbi_load("resources/textures/sand.png", &texWidth, &texHeight, &nrChannels, 0);
+    unsigned char* data = stbi_load("resources/textures/grass.png", &texWidth, &texHeight, &nrChannels, 0);
 
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -93,16 +102,17 @@ int main(void) {
     } else {
         std::cout << "Failed to load image.\n";
     }
-    stbi_image_free(data);
+    stbi_image_free(data);*/
 
     // Generate the world
 
-    Data::World world = Data::World(5, 3, 5);
+    std::cout << "[Main]: Generating world...\n";
+    Data::World world = Data::World(4, 2, 4);
 
     // Create Camera and WorldRenderer
 
     Renderer::Camera camera = Renderer::Camera(glm::vec3(0.0f, 60.0f, 0.0f), glm::radians(80.0f), aspectRatio);
-    Renderer::WorldRenderer renderer = Renderer::WorldRenderer(world, camera);
+    Renderer::WorldRenderer renderer = Renderer::WorldRenderer(world, camera, atlas);
 
     camera.ry = 3.1415f;
 
@@ -201,6 +211,7 @@ int main(void) {
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     renderer.cleanup();
+    atlas.cleanup();
 
     glfwTerminate();
     return 0;

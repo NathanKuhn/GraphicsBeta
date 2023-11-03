@@ -42,6 +42,9 @@
     <ClCompile Include="src\renderer\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer\TextureAtlas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\renderer\MeshData.hpp">
@@ -71,6 +74,9 @@
     <ClInclude Include="src\renderer\Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer\TextureAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\ChunkFragment.frag" />
@@ -86,6 +92,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="resources\textures\debug.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\gravel.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\unknown.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

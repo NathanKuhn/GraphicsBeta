@@ -3,7 +3,7 @@
 
 namespace Renderer {
 
-	WorldRenderer::WorldRenderer(const Data::World& worldRef, const Camera& cameraRef) :
+	WorldRenderer::WorldRenderer(const Data::World& worldRef, const Camera& cameraRef, const Renderer::TextureAtlas& textureAtlas) :
 		world{ worldRef },
 		camera{ cameraRef },
 		shader{ Renderer::ShaderProgram("resources/shaders/ChunkVertex.vert", "resources/shaders/ChunkFragment.frag") },
@@ -12,7 +12,7 @@ namespace Renderer {
 		shader.addUniform("uTransform");
 		skyShader.addUniform("uTransform");
 
-		MeshData skyMesh = MeshData(skyVerts, skyNormals, skyUvs, skyTris);
+		MeshData skyMesh = MeshData(_SKY_VERTS, _SKY_NORMALS, _SKY_UVS, _SKY_TRIS);
 		skyObject = RenderObject(skyMesh);
 
 		glm::ivec3 worldSize = world.getWorldSize();
@@ -24,7 +24,8 @@ namespace Renderer {
 					chunkMeshes.push_back(
 						ChunkMesh(
 							world.getChunk(glm::ivec3(x, y, z)),
-							world));
+							world,
+							textureAtlas));
 				}
 			}
 		}

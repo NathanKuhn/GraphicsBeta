@@ -3,13 +3,13 @@
 
 namespace Renderer {
 
-	ChunkMesh::ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData) {
+	ChunkMesh::ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData, const Renderer::TextureAtlas& textureAtlas) {
 		renderObject = RenderObject();
 		renderObject.setPosition(chunkData.getChunkPosition() * CHUNK_SIZE);
-		updateMesh(chunkData, worldData);
+		updateMesh(chunkData, worldData, textureAtlas);
 	}
 
-	void ChunkMesh::updateMesh(const Data::Chunk& chunkData, const Data::World& worldData) {
+	void ChunkMesh::updateMesh(const Data::Chunk& chunkData, const Data::World& worldData, const Renderer::TextureAtlas& textureAtlas) {
 		bool px, nx, py, ny, pz, nz;
 		MeshData newMesh = MeshData();
 		glm::ivec3 worldOffset = chunkData.getChunkPosition() * CHUNK_SIZE;
@@ -28,8 +28,8 @@ namespace Renderer {
 						nz = (z > 0) ? !chunkData.getBlock(x, y, z - 1) : !worldData.getBlock(glm::ivec3(x, y, z - 1) + worldOffset);
 
 						glm::vec3 offset(x, y, z);
-						glm::vec2 uvOffset(0.0f, 0.0f);
-						float uvScale = 1.0f;
+						glm::vec2 uvOffset = textureAtlas.getOffset(chunkData.getBlock(x, y, z));
+						float uvScale = textureAtlas.getScale();
 						if (px) {
 							_addMesh(newMesh, _POS_X_FACE, offset, uvOffset, uvScale);
 						}

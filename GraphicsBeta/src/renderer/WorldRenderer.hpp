@@ -18,7 +18,7 @@ namespace Renderer {
 		std::vector<ChunkMesh> chunkMeshes;
 		
 	public:
-		WorldRenderer(const Data::World& worldRef, const Camera& cameraRef);
+		WorldRenderer(const Data::World& worldRef, const Camera& cameraRef, const Renderer::TextureAtlas& textureAtlas);
 
 		void Render() const;
 
@@ -27,28 +27,28 @@ namespace Renderer {
         
 	};
 
-    const std::vector<glm::vec3> skyVerts = {
+    const std::vector<glm::vec3> _SKY_VERTS = {
         glm::vec3(-1, -1, 0.99999),
         glm::vec3(1, -1, 0.99999),
         glm::vec3(1, 1, 0.99999),
         glm::vec3(-1, 1, 0.99999)
     };
 
-    const std::vector<glm::vec3> skyNormals = {
+    const std::vector<glm::vec3> _SKY_NORMALS = {
         glm::vec3(0, 0, -1),
         glm::vec3(0, 0, -1),
         glm::vec3(0, 0, -1),
         glm::vec3(0, 0, -1)
     };
 
-    const std::vector<glm::vec2> skyUvs = {
+    const std::vector<glm::vec2> _SKY_UVS = {
         glm::vec2(0, 0),
         glm::vec2(1, 0),
         glm::vec2(1, 1),
         glm::vec2(0, 1)
     };
 
-    const std::vector<glm::ivec3> skyTris = {
+    const std::vector<glm::ivec3> _SKY_TRIS = {
         glm::ivec3(0, 1, 2),
         glm::ivec3(0, 2, 3)
     };

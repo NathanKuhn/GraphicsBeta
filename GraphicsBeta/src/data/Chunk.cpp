@@ -27,8 +27,17 @@ namespace Data {
 
 				for (int y = 0; y < CHUNK_SIZE; y++) {
 					
+					int blockValue;
+					if (worldPosition.y + y < 15) {
+						blockValue = 3;
+					} else if (worldPosition.y + y < 55) {
+						blockValue = 1;
+					} else {
+						blockValue = 2;
+					}
+
 					if (worldPosition.y + y < terrainHeight)
-						blockValues[x * CHUNK_SIZE * CHUNK_SIZE + y * CHUNK_SIZE + z] = 1;
+						blockValues[x * CHUNK_SIZE * CHUNK_SIZE + y * CHUNK_SIZE + z] = blockValue;
 					else
 						blockValues[x * CHUNK_SIZE * CHUNK_SIZE + y * CHUNK_SIZE + z] = 0;
 				}

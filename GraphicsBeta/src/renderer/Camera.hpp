@@ -2,7 +2,7 @@
 #include "glm/glm.hpp"
 
 #define NEAR_PLANE 0.01f
-#define FAR_PLANE 1000.0f
+#define FAR_PLANE 10000.0f
 
 namespace Renderer {
 

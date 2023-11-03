@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include "MeshData.hpp"
 #include "RenderObject.hpp"
+#include "TextureAtlas.h"
 #include "../data/Chunk.hpp"
 #include "../data/World.hpp"
 
@@ -16,9 +17,9 @@ namespace Renderer {
 		void _addMesh(MeshData& destination, const MeshData& source, const glm::vec3 offset, const glm::vec2 uvOffset, const float uvScale);
 
 	public:
-		ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData);
+		ChunkMesh(const Data::Chunk& chunkData, const Data::World& worldData, const Renderer::TextureAtlas& textureAtlas);
 
-		void updateMesh(const Data::Chunk& chunkData, const Data::World& worldData);
+		void updateMesh(const Data::Chunk& chunkData, const Data::World& worldData, const Renderer::TextureAtlas& textureAtlas);
 		RenderObject getRenderObject() const;
 	};
 

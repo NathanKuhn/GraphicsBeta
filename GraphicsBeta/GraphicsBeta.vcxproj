@@ -148,6 +148,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\renderer\RenderObject.cpp" />
     <ClCompile Include="src\renderer\ShaderProgram.cpp" />
+    <ClCompile Include="src\renderer\TextureAtlas.cpp" />
     <ClCompile Include="src\utils\FileUtils.cpp" />
     <ClCompile Include="src\data\World.cpp" />
     <ClCompile Include="src\renderer\WorldRenderer.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\renderer\MeshData.hpp" />
     <ClInclude Include="src\renderer\RenderObject.hpp" />
     <ClInclude Include="src\renderer\ShaderProgram.hpp" />
+    <ClInclude Include="src\renderer\TextureAtlas.h" />
     <ClInclude Include="src\utils\FileUtils.h" />
     <ClInclude Include="src\data\World.hpp" />
     <ClInclude Include="src\renderer\WorldRenderer.hpp" />
@@ -183,7 +185,9 @@
     <Image Include="resources\textures\grass.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="resources\textures\gravel.png" />
     <Image Include="resources\textures\sand.png" />
+    <Image Include="resources\textures\unknown.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
